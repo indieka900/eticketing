@@ -56,17 +56,49 @@ require ('../commons/header.php');
                 <i class="uil uil-search"></i>
                 <input type="text" placeholder="Search here...">
             </div> -->
-            <div id="popup">
-            <img src="../commons/images/logos.png" alt="">
-            <h2 style="text-align: left"></h2>
-           <!-- <script>
-  $(document).ready(function() {
-    setInterval(function() {
-      $("#popup").load(window.location.href + " popup", function() { console.log("loaded") });
-    }, 5000);
-  });
-</script> -->
+            <div>
+                <?php 
+                    function getComplaintCount($conn) {
+                        $sqlQuery = "SELECT count(complaintid) as totalComplaints FROM complaints";
+                        $result = mysqli_query($conn, $sqlQuery) or die("database error:". mysqli_error($conn));
+                        $data = mysqli_fetch_assoc($result);
+                        $totalComplaints = $data['totalComplaints'];
+                        
+                        return $totalComplaints;
+                    }
+                 ?>
+                <a href="#D0" class="notification">
+                <span>New Unassigned</span>
+                <span id="mydiv" class="badge"></span>
+                </a>
+            </div>
             
+            <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+            <script>
+                function refreshDiv() {
+                    $.ajax({
+                        url: 'fetch_comp.php', // Your PHP script URL
+                        method: 'GET',
+                        success: function(data) {
+                            var totalComplaints = data.totalComplaints;
+                            var complaintCountDiv = document.getElementById("mydiv");
+                            complaintCountDiv.innerHTML = totalComplaints;
+                        },
+                        error: function(jqXHR, textStatus, errorThrown) {
+                            var complaintCountDiv = document.getElementById("mydiv");
+                            complaintCountDiv.innerHTML = 0;
+                             alert( errorThrown);
+                        }
+                    });
+                }
+
+                // Call the function when the page loads
+                window.onload = function() {
+                    refreshDiv();
+                    // Repeat every 3 seconds (3000 milliseconds)
+                    setInterval(refreshDiv, 3000);
+                };
+            </script>
 
 
             </div> 
